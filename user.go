@@ -17,29 +17,34 @@ type User struct {
 
 // User retreives a single user from an organization
 func (org *Organization) User(email string) (*User, error) {
-	var u userResponse
+	var u userResource
 	err := org.PPE.get(fmt.Sprintf("/orgs/%s/users/%s", org.PrimaryDomain, email), &u)
 	if err != nil {
 		return &User{}, err
 	}
-	return userFromUserResponse(org, u), nil
+	return userFromUserResource(org, u), nil
 }
 
 // Users retreives all the users of an organization
 func (org *Organization) Users() ([]*User, error) {
-	var us []userResponse
+	var us []userResource
 	err := org.PPE.get(fmt.Sprintf("/orgs/%s/users", org.PrimaryDomain), &us)
 	if err != nil {
 		return []*User{}, err
 	}
 	users := make([]*User, len(us))
 	for i, u := range us {
-		users[i] = userFromUserResponse(org, u)
+		users[i] = userFromUserResource(org, u)
 	}
 	return users, nil
 }
 
-func userFromUserResponse(org *Organization, res userResponse) *User {
+// NewUser creates a new user on the organization
+func (org *Organization) NewUser(user NewUser) error {
+	return nil
+}
+
+func userFromUserResource(org *Organization, res userResource) *User {
 	return &User{
 		Organization:     org,
 		Firstname:        res.Firstname,
@@ -53,13 +58,22 @@ func userFromUserResponse(org *Organization, res userResponse) *User {
 	}
 }
 
-type userResponse struct {
-	Firstname        string   `json:"firstname"`
-	Surname          string   `json:"surname"`
+// NewUser is the type used for user creation
+type NewUser struct {
+	PrimaryEmail string   `json:"primary_email"`
+	Firstname    string   `json:"firstname,omitempty"`
+	Lastname     string   `json:"lastname"`
+	AliasEmails  []string `json:"alias_emails"`
+	Type         string   `json:"type"`
+}
+
+type userResource struct {
+	Firstname        string   `json:"firstname,omitempty"`
+	Surname          string   `json:"surname,omitempty"`
 	PrimaryEmail     string   `json:"primary_email"`
-	AliasEmails      []string `json:"alias_emails"`
-	WhiteListSenders []string `json:"white_list_senders"`
-	BlackListSenders []string `json:"black_list_senders"`
-	IsActive         int      `json:"isactive"`
-	Type             string   `json:"type"`
+	AliasEmails      []string `json:"alias_emails,omitempty"`
+	WhiteListSenders []string `json:"white_list_senders,omitempty"`
+	BlackListSenders []string `json:"black_list_senders,omitempty"`
+	IsActive         int      `json:"isactive,omitempty"`
+	Type             string   `json:"type,omitempty"`
 }
