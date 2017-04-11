@@ -22,6 +22,7 @@ func (org *Organization) Domain(domain string) (*Domain, error) {
 	return domainFromDomainResponse(org, d.Domains[0]), nil
 }
 
+// Domain retrieves a domain without knowing it's organization
 func (ppe *PPE) Domain(domain string) (*Domain, error) {
 	var d domainsResponse
 	err := ppe.get(fmt.Sprintf("/domains/%s", domain), &d)
