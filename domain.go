@@ -1,6 +1,11 @@
 package ppe
 
-import "fmt"
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+)
 
 // Domain is the main domain type
 type Domain struct {
@@ -10,6 +15,14 @@ type Domain struct {
 	Failover     string
 	Relay        bool
 	Active       bool
+}
+
+// NewDomain is the creation type passed to CreateDomain
+type NewDomain struct {
+	DomainName  string `json:"domain_name"`
+	Destination string `json:"destination"`
+	Failover    string `json:"failover,omitempty"`
+	IsRelay     int    `json:"is_relay,omitempty"`
 }
 
 // Domain retrieves a domain from an organization
@@ -61,6 +74,30 @@ func (org *Organization) Domains() ([]*Domain, error) {
 		}
 	}
 	return doms, nil
+}
+
+type domCreationResponse struct {
+	TotalCreated int `json:"total_created"`
+}
+
+// CreateDomain creates a new domain for the organization
+func (org *Organization) CreateDomain(newDom NewDomain) error {
+	var (
+		r domCreationResponse
+		b bytes.Buffer
+	)
+	err := json.NewEncoder(&b).Encode(newDom)
+	if err != nil {
+		return err
+	}
+	err = org.PPE.post(fmt.Sprintf("/domains/%s", org.PrimaryDomain), &b, r)
+	if err != nil {
+		return err
+	}
+	if r.TotalCreated != 1 {
+		return errors.New("Not created")
+	}
+	return nil
 }
 
 func domainFromDomainResponse(org *Organization, res domainResponse) *Domain {
