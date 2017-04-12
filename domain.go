@@ -77,7 +77,17 @@ func (org *Organization) Domains() ([]*Domain, error) {
 }
 
 type domCreationResponse struct {
-	TotalCreated int `json:"total_created"`
+	TotalCreated int                     `json:"total_created"`
+	FailResults  []domCreationFailResult `json:"fail_results"`
+}
+
+type domCreationFailResult struct {
+	Result domCreationResult `json:"result"`
+}
+
+type domCreationResult struct {
+	ResultCode int    `json:"result_code"`
+	Message    string `json:"message"`
 }
 
 // CreateDomain creates a new domain for the organization
@@ -94,8 +104,8 @@ func (org *Organization) CreateDomain(newDom NewDomain) error {
 	if err != nil {
 		return err
 	}
-	if r.TotalCreated != 1 {
-		return errors.New("Not created")
+	if len(r.FailResults) > 0 {
+		return errors.New(r.FailResults[0].Result.Message)
 	}
 	return nil
 }
