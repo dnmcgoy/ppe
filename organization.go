@@ -48,14 +48,14 @@ type NewOrganization struct {
 	Domains      []NewOrgDomain `json:"domains"`
 
 	// Optional fields
-	PrimaryDomain     string `json:"primary_domain"`
-	WWW               string `json:"www"`
-	Address           string `json:"address"`
-	Postcode          string `json:"postcode"`
-	Country           string `json:"country"`
-	Phone             string `json:"phone"`
-	LicensingPackage  string `json:"licensing_package"` // Defaults to beginner
-	AccountTemplateID string `json:"account_template_id"`
+	PrimaryDomain     string `json:"primary_domain,omitempty"`
+	WWW               string `json:"www,omitempty"`
+	Address           string `json:"address,omitempty"`
+	Postcode          string `json:"postcode,omitempty"`
+	Country           string `json:"country,omitempty"`
+	Phone             string `json:"phone,omitempty"`
+	LicensingPackage  string `json:"licensing_package,omitempty"` // Defaults to beginner
+	AccountTemplateID string `json:"account_template_id,omitempty"`
 }
 
 // NewOrgDomain is used when creating domains together with an organization. We
