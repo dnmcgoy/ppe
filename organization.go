@@ -54,7 +54,7 @@ type NewOrganization struct {
 	Postcode          string `json:"postcode,omitempty"`
 	Country           string `json:"country,omitempty"`
 	Phone             string `json:"phone,omitempty"`
-	LicensingPackage  string `json:"licensing_package,omitempty"` // Defaults to beginner
+	LicencingPackage  string `json:"licencing_package,omitempty"` // Defaults to beginner
 	AccountTemplateID string `json:"account_template_id,omitempty"`
 }
 
