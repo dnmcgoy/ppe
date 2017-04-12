@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // Domain is the main domain type
@@ -105,7 +106,11 @@ func (org *Organization) CreateDomain(newDom NewDomain) error {
 		return err
 	}
 	if len(r.FailResults) > 0 {
-		return errors.New(r.FailResults[0].Result.Message)
+		errs := make([]string, len(r.FailResults))
+		for i, fr := range r.FailResults {
+			errs[i] = fr.Result.Message
+		}
+		return errors.New(strings.Join(errs, ", "))
 	}
 	return nil
 }
