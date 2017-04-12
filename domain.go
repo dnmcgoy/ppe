@@ -97,7 +97,8 @@ func (org *Organization) CreateDomain(newDom NewDomain) error {
 		r domCreationResponse
 		b bytes.Buffer
 	)
-	err := json.NewEncoder(&b).Encode(newDom)
+	newDomL := []NewDomain{newDom}
+	err := json.NewEncoder(&b).Encode(newDomL)
 	if err != nil {
 		return err
 	}
