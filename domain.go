@@ -90,7 +90,7 @@ func (org *Organization) CreateDomain(newDom NewDomain) error {
 	if err != nil {
 		return err
 	}
-	err = org.PPE.post(fmt.Sprintf("/domains/%s", org.PrimaryDomain), &b, r)
+	err = org.PPE.post(fmt.Sprintf("/domains/%s", org.PrimaryDomain), &b, &r)
 	if err != nil {
 		return err
 	}
