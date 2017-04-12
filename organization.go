@@ -65,6 +65,20 @@ type NewOrgDomain struct {
 	Transports []string `json:"transports"`
 }
 
+type orgCreationResponse struct {
+	TotalCreated int                     `json:"total_created"`
+	FailResults  []orgCreationFailResult `json:"fail_results"`
+}
+
+type orgCreationFailResult struct {
+	Result orgCreationResult `json:"result"`
+}
+
+type orgCreationResult struct {
+	ResultCode int    `json:"result_code"`
+	Message    string `json:"message"`
+}
+
 // CreateOrganization creates a new organization associated with this
 // organization.
 func (org *Organization) CreateOrganization(newOrg NewOrganization) error {
@@ -84,20 +98,6 @@ func (org *Organization) CreateOrganization(newOrg NewOrganization) error {
 		return errors.New(r.FailResults[0].Result.Message)
 	}
 	return nil
-}
-
-type orgCreationResponse struct {
-	TotalCreated int                     `json:"total_created"`
-	FailResults  []orgCreationFailResult `json:"fail_results"`
-}
-
-type orgCreationFailResult struct {
-	Result orgCreationResult `json:"result"`
-}
-
-type orgCreationResult struct {
-	ResultCode int    `json:"result_code"`
-	Message    string `json:"message"`
 }
 
 func orgFromOrgResource(ppe *PPE, res orgResource) *Organization {
