@@ -39,9 +39,35 @@ func (org *Organization) Organizations() ([]*Organization, error) {
 	return orgs, nil
 }
 
-// NewOrganization creates a new organization associated with this
+// NewOrganization is the creation type passed to CreateOrganization
+type NewOrganization struct {
+	// Required fields
+	Name         string         `json:"name"`
+	AdminUser    NewUser        `json:"admin_user"`
+	UserLicenses int            `json:"user_licences"`
+	Domains      []NewOrgDomain `json:"domains"`
+
+	// Optional fields
+	PrimaryDomain     string `json:"primary_domain"`
+	WWW               string `json:"www"`
+	Address           string `json:"address"`
+	Postcode          string `json:"postcode"`
+	Country           string `json:"country"`
+	Phone             string `json:"phone"`
+	LicensingPackage  string `json:"licensing_package"` // Defaults to beginner
+	AccountTemplateID string `json:"account_template_id"`
+}
+
+// NewOrgDomain is used when creating domains together with an organization. We
+// need this type because the proofpoint API is inconsistent.
+type NewOrgDomain struct {
+	Name       string   `json:"name"`
+	Transports []string `json:"transports"`
+}
+
+// CreateOrganization creates a new organization associated with this
 // organization.
-func (org *Organization) NewOrganization(newOrg NewOrganization) error {
+func (org *Organization) CreateOrganization(newOrg NewOrganization) error {
 	var (
 		r orgCreationResponse
 		b bytes.Buffer
@@ -75,22 +101,6 @@ func orgFromOrgResource(ppe *PPE, res orgResource) *Organization {
 		PrimaryDomain: res.PrimaryDomain,
 		domains:       domains,
 	}
-}
-
-// NewOrganization is the creation type passed to CreateOrganization
-type NewOrganization struct {
-	// Required fields
-	PrimaryDomain string  `json:"primary_domain"`
-	Name          string  `json:"name"`
-	AdminUser     NewUser `json:"admin_user"`
-	UserLicenses  int
-	// Optional fields
-	WWW              string `json:"www"`
-	Address          string `json:"address"`
-	Postcode         string `json:"postcode"`
-	Country          string `json:"country"`
-	Phone            string `json:"phone"`
-	LicensingPackage string `json:"licensing_package"` // Defaults to beginner
 }
 
 type orgResource struct {
