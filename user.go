@@ -83,6 +83,44 @@ func (org *Organization) CreateUser(user NewUser) error {
 	return nil
 }
 
+// UserChange is used to update a user
+type UserChange struct {
+	// Required
+	PrimaryEmail string `json:"primary_email"`
+	// Optional
+	Firstname        string   `json:"firstname,omitempty"`
+	Surname          string   `json:"surname,omitempty"`
+	AliasEmails      []string `json:"alias_emails,omitempty"`
+	WhiteListSenders []string `json:"white_list_senders,omitempty"`
+	BlackListSenders []string `json:"black_list_senders,omitempty"`
+	Type             string   `json:"type,omitempty"`
+}
+
+type userUpdateResponse struct {
+	ResultCode int    `json:"result_code"`
+	Message    string `json:"message"`
+}
+
+// UpdateUser updates a user according to the given UserChange
+func (org *Organization) UpdateUser(user UserChange) error {
+	var (
+		r userUpdateResponse
+		b bytes.Buffer
+	)
+	err := json.NewEncoder(&b).Encode(user)
+	if err != nil {
+		return err
+	}
+	err = org.PPE.put(fmt.Sprintf("/orgs/%s/users/%s", org.PrimaryDomain, user.PrimaryEmail), &b, &r)
+	if err != nil {
+		return err
+	}
+	if r.ResultCode != 0 {
+		return errors.New(r.Message)
+	}
+	return nil
+}
+
 func userFromUserResource(org *Organization, res userResource) *User {
 	return &User{
 		Organization:     org,
