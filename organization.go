@@ -12,6 +12,7 @@ type Organization struct {
 	PPE           *PPE
 	Name          string
 	PrimaryDomain string
+	UserLicenses  int
 	domains       []string
 }
 
@@ -109,6 +110,7 @@ func orgFromOrgResource(ppe *PPE, res orgResource) *Organization {
 		PPE:           ppe,
 		Name:          res.Name,
 		PrimaryDomain: res.PrimaryDomain,
+		UserLicenses:  res.UserLicenses,
 		domains:       domains,
 	}
 }
